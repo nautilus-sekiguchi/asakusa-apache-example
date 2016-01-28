@@ -3,4 +3,5 @@
 .buildtools/
 build/
 *.iml
+.DS_Store
 

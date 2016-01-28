@@ -1,0 +1,24 @@
+in:
+  type: file
+  path_prefix: ./apache/
+  parser:
+    type: apache-custom-log
+    # format: "%v %l %u %t \"%r\" %>s %b"
+    # 通常のApache Logファイルの形式は上記だが、World Cupデータセットの場合、
+    # ホストIPは匿名化されているため、%h では読み取れない。便宜的に %vとした
+    format: "%v %l %u %t \"%r\" %>s %b"
+out: 
+  type: file
+  path_prefix: ./logfiles/
+  file_ext: .csv
+  overwrite: true
+  formatter:
+    type: csv
+    # header_line: false
+    encoding: UTF-8
+    newline: CRLF
+    quote: '"'
+    escape: '"'
+    default_timezone: 'Asia/Tokyo'
+    column_options:
+      request-time: {format: '%Y-%m-%d %H:%M:%S %z'}
