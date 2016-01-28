@@ -26,7 +26,7 @@ Apacheログファイルから、CSVへの変換に、[Embulk](https://github.co
 
 ## ファイルの準備
 
-1. `embulk run apache.yml` embulkを使って、ApacheログファイルをCSVにします。
+1. `embulk run apache.yml` embulkを使って、ApacheログファイルをCSVにします。出力ファイルは、`logfiles` 以下にできます。
 2. ホームディレクトリで下記を行います
   * `hadoop fs -mkdir target/testing/directio/logfiles`
   * (ディレクトリを戻って) `mv ./logfiles ~/target/testing/directio/`
