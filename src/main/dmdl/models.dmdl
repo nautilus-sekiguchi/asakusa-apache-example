@@ -1,0 +1,76 @@
+"World Cup 98のログファイル。CSVに変換済み"
+@directio.csv(
+    has_header = TRUE,
+    datetime = "yyyy-MM-dd HH:mm:ss Z"
+)
+apache_log = {
+    "リクエスト元サーバ. 匿名化されている"
+    @directio.csv.field(name="request-server-name")
+    request_server_name : TEXT;
+
+    "リモートログイン名. このログでは、常に空"
+    @directio.csv.field(name="remote-log-name")
+    remote_log_name : TEXT;
+
+    "リクエストユーザー名. このログでは常に空"
+    @directio.csv.field(name="request-user")
+    request_user : TEXT;
+
+    "リクエストの日時分秒"
+    @directio.csv.field(name="request-time")
+    request_time : DATETIME;
+
+    "リクエスト URL"
+    @directio.csv.field(name="request-line")
+    request_line : TEXT;
+
+    "HTTPレスポンスコード"
+    @directio.csv.field(name="response-status")
+    response_status : TEXT;
+
+    "レスポンスのサイズ（バイト数）"
+    @directio.csv.field(name="response-bytes")
+    response_bytes : LONG;
+};
+
+/**
+  中間ファイル。計算のために属性を拡張する
+*/
+
+log_tmp = apache_log + {
+    "リクエスト日"
+    request_date : TEXT;
+
+    "リクエスト時"
+    request_hour : TEXT;
+
+    "リクエスト URL"
+    request_url : TEXT;
+};
+
+/**
+  URL, Statusごとの集計
+  */
+@directio.csv(
+    has_header = TRUE
+)
+summarized url_count = log_tmp => {
+    any response_status -> status;
+    count request_server_name -> count;
+    any request_url -> url;
+    sum response_bytes -> bytes;
+} % status,url;
+
+/**
+  最終的なアウトプット
+*/
+@directio.csv(
+    has_header = TRUE,
+)
+summarized access_log = log_tmp => {
+    any request_date -> date;
+    any request_hour -> hour;
+    count request_server_name -> count;
+    any request_url -> url;
+    sum response_bytes -> bytes;
+} % date,hour,url;
